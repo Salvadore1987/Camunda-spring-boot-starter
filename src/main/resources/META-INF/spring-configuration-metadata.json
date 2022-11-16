@@ -1,0 +1,39 @@
+{
+  "properties": [
+    {
+      "name": "camunda.rest.engineRestUrl",
+      "type": "java.lang.String",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.socketTimeout",
+      "type": "java.lang.Integer",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.readTimeout",
+      "type": "java.lang.Integer",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.startByIdUrl",
+      "type": "java.lang.String",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.startByKeyUrl",
+      "type": "java.lang.String",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    },
+    {
+      "name": "camunda.rest.startByTenantUrl",
+      "type": "java.lang.String",
+      "sourceType": "uz.keysoft.camunda.spring.boot.starter.config.CamundaRestProperties"
+    }
+  ]
+}
