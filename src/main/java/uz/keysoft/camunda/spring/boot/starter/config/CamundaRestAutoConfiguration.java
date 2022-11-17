@@ -60,7 +60,7 @@ public class CamundaRestAutoConfiguration {
 
   @Bean
   public ProcessService camundaProcessService() {
-    return new CamundaProcessService(restTemplate(), mapper);
+    return new CamundaProcessService(restTemplate());
   }
 
   @Bean

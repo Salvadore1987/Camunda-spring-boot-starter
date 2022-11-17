@@ -1,6 +1,5 @@
 package uz.keysoft.camunda.spring.boot.starter.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +27,6 @@ import java.util.Optional;
 public class CamundaProcessService implements ProcessService {
 
   RestTemplate restTemplate;
-  ObjectMapper mapper;
 
   /**
    * Start camunda process by Definition ID
@@ -88,15 +86,59 @@ public class CamundaProcessService implements ProcessService {
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
+  @Override
+  public StartProcessResult startProcessById(String id, String businessKey, Map<String, Object> variables) {
+    final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
+      "/process-definition/{id}/start",
+      HttpMethod.POST,
+      httpEntity(businessKey, variables),
+      StartProcessResult.class,
+      Map.of("id", id));
+    return Optional.ofNullable(response.getBody()).orElseThrow();
+  }
+
+  @Override
+  public StartProcessResult startProcessByKey(String key, String businessKey, Map<String, Object> variables) {
+    final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
+      "/process-definition/key/{key}/start",
+      HttpMethod.POST,
+      httpEntity(businessKey, variables),
+      StartProcessResult.class,
+      Map.of("key", key));
+    return Optional.ofNullable(response.getBody()).orElseThrow();
+  }
+
+  @Override
+  public StartProcessResult startProcessByTenantId(String key, String tenantId, String businessKey, Map<String, Object> variables) {
+    final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
+      "/process-definition/key/{key}/tenant-id/{tenant-id}/start",
+      HttpMethod.POST,
+      httpEntity(businessKey, variables),
+      StartProcessResult.class,
+      Map.of("key", key, "tenant-id", tenantId));
+    return Optional.ofNullable(response.getBody()).orElseThrow();
+  }
+
   private <T> StartProcessRequest buildRequest(String businessKey, T data) {
     return StartProcessRequest.builder()
       .businessKey(businessKey)
-      .variables(PayloadUtil.extractPayload(mapper.convertValue(data, Map.class)))
+      .variables(PayloadUtil.extractToJsonPayload(data))
+      .build();
+  }
+
+  private StartProcessRequest buildRequest(String businessKey, Map<String, Object> variables) {
+    return StartProcessRequest.builder()
+      .businessKey(businessKey)
+      .variables(PayloadUtil.extractPayload(variables))
       .build();
   }
 
   private <T> HttpEntity<StartProcessRequest> httpEntity(String businessKey, T data) {
     return new HttpEntity<>(buildRequest(businessKey, data));
+  }
+
+  private HttpEntity<StartProcessRequest> httpEntity(String businessKey, Map<String, Object> variables) {
+    return new HttpEntity<>(buildRequest(businessKey, variables));
   }
 
 }

@@ -2,6 +2,8 @@ package uz.keysoft.camunda.spring.boot.starter.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import uz.keysoft.camunda.spring.boot.starter.dto.ValueInfo;
 import uz.keysoft.camunda.spring.boot.starter.dto.VariablePair;
 import uz.keysoft.camunda.spring.boot.starter.dto.message.CorrelationKey;
@@ -24,6 +26,19 @@ public class PayloadUtil {
       .value(v)
       .build()));
     return keys;
+  }
+
+  public static <T> Map<String, VariablePair> extractToJsonPayload(T data) {
+    final VariablePair variable = VariablePair.builder()
+      .type(CamundaType.STRING)
+      .value(data)
+      .valueInfo(ValueInfo.builder()
+        .serializationDataFormat(SerializationDataFormat.JSON)
+        .objectTypeName(data.getClass().getName())
+        .build())
+      .build();
+    final String key = StringUtils.capitalize(data.getClass().getSimpleName());
+    return Map.of(key, variable);
   }
 
   public static Map<String, VariablePair> extractPayload(Map<String, Object> values) {

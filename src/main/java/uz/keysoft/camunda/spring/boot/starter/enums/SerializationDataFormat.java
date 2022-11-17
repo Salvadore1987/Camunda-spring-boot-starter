@@ -6,7 +6,7 @@ public enum SerializationDataFormat {
 
   JSON("application/json"),
   XML("application/xml"),
-  JAVA("");
+  JAVA("application/x-java-serialized-object");
 
   private final String format;
 
