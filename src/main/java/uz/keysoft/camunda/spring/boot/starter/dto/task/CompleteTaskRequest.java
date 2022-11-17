@@ -16,5 +16,8 @@ import java.util.Map;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompleteTaskRequest {
+  /**
+   * A JSON object containing variable key-value pairs.
+   */
   Map<String, VariablePair> variables;
 }

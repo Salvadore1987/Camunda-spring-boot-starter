@@ -8,21 +8,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import uz.keysoft.camunda.spring.boot.starter.enums.CamundaType;
-import uz.keysoft.camunda.spring.boot.starter.serializers.CamundaTypeDeserializer;
-import uz.keysoft.camunda.spring.boot.starter.serializers.CamundaTypeSerializer;
+import uz.keysoft.camunda.spring.boot.starter.enums.SerializationDataFormat;
+import uz.keysoft.camunda.spring.boot.starter.serializers.DataFormatDeserializer;
+import uz.keysoft.camunda.spring.boot.starter.serializers.DataFormatSerializer;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VariablePair {
+public class ValueInfo {
 
-  Object value;
-  @JsonSerialize(using = CamundaTypeSerializer.class)
-  @JsonDeserialize(using = CamundaTypeDeserializer.class)
-  CamundaType type;
-  ValueInfo valueInfo;
+  String objectTypeName;
+  @JsonSerialize(using = DataFormatSerializer.class)
+  @JsonDeserialize(using = DataFormatDeserializer.class)
+  SerializationDataFormat serializationDataFormat;
 
 }

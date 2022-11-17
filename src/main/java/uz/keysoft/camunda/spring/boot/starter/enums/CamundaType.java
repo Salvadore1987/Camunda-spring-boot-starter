@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum CamundaType {
 
-  STRING("String"), LONG("Long"), INTEGER("Integer"), BOOLEAN("Boolean"), ARRAY("Array"), OBJECT("Object");
+  STRING("String"), LONG("Long"), INTEGER("Integer"), BOOLEAN("Boolean"), ARRAY("Array"), FLOAT("Float"), DOUBLE("Double"), OBJECT("Object");
 
   private final String name;
 
