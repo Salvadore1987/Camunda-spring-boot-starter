@@ -1,5 +1,6 @@
 package uz.keysoft.camunda.spring.boot.starter.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,9 +28,10 @@ import java.util.Optional;
 public class CamundaProcessService implements ProcessService {
 
   RestTemplate restTemplate;
+  ObjectMapper mapper;
 
   /**
-   * Start camunda process by Definition ID
+   * Start camunda process by Definition ID with json string variable
    * @param id definition ID
    * @param businessKey process business key
    * @param data data to be used in process
@@ -48,7 +50,7 @@ public class CamundaProcessService implements ProcessService {
   }
 
   /**
-   * Start camunda process by definition key
+   * Start camunda process by definition key with json string variable
    * @param key definition key
    * @param businessKey process business key
    * @param data data to be used in process
@@ -67,7 +69,7 @@ public class CamundaProcessService implements ProcessService {
   }
 
   /**
-   * Start camunda process by tenant ID
+   * Start camunda process by tenant ID with json string variable
    * @param key definition key
    * @param tenantId tenant ID
    * @param businessKey process business key
@@ -86,6 +88,14 @@ public class CamundaProcessService implements ProcessService {
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
+  /**
+   * Start camunda process by Definition ID with map Variables
+   * @param id definition ID
+   * @param businessKey process business key
+   * @param variables data to be used in process in Map.class format
+   * @return returned by Camunda data
+   * @see <a href='https://docs.camunda.org/manual/7.5/reference/rest/process-definition/post-start-process-instance/'>Start Instance</a>
+   */
   @Override
   public StartProcessResult startProcessById(String id, String businessKey, Map<String, Object> variables) {
     final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
@@ -97,6 +107,14 @@ public class CamundaProcessService implements ProcessService {
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
+  /**
+   * Start camunda process by definition key with map Variables
+   * @param key definition key
+   * @param businessKey process business key
+   * @param variables data to be used in process in Map.class format
+   * @return returned by Camunda data
+   * @see <a href='https://docs.camunda.org/manual/7.5/reference/rest/process-definition/post-start-process-instance/'>Start Instance</a>
+   */
   @Override
   public StartProcessResult startProcessByKey(String key, String businessKey, Map<String, Object> variables) {
     final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
@@ -108,6 +126,15 @@ public class CamundaProcessService implements ProcessService {
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
+  /**
+   * Start camunda process by tenant ID with map Variables
+   * @param key definition key
+   * @param tenantId tenant ID
+   * @param businessKey process business key
+   * @param variables data to be used in process in Map.class format
+   * @return returned by Camunda data
+   * @see <a href='https://docs.camunda.org/manual/7.5/reference/rest/process-definition/post-start-process-instance/'>Start Instance</a>
+   */
   @Override
   public StartProcessResult startProcessByTenantId(String key, String tenantId, String businessKey, Map<String, Object> variables) {
     final ResponseEntity<StartProcessResult> response = restTemplate.exchange(
@@ -122,7 +149,7 @@ public class CamundaProcessService implements ProcessService {
   private <T> StartProcessRequest buildRequest(String businessKey, T data) {
     return StartProcessRequest.builder()
       .businessKey(businessKey)
-      .variables(PayloadUtil.extractToJsonPayload(data))
+      .variables(PayloadUtil.extractToJsonPayload(data, mapper))
       .build();
   }
 

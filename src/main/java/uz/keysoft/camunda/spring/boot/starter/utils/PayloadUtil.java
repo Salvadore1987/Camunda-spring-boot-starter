@@ -1,9 +1,10 @@
 package uz.keysoft.camunda.spring.boot.starter.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CaseUtils;
 import uz.keysoft.camunda.spring.boot.starter.dto.ValueInfo;
 import uz.keysoft.camunda.spring.boot.starter.dto.VariablePair;
 import uz.keysoft.camunda.spring.boot.starter.dto.message.CorrelationKey;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PayloadUtil {
 
@@ -28,16 +30,16 @@ public class PayloadUtil {
     return keys;
   }
 
-  public static <T> Map<String, VariablePair> extractToJsonPayload(T data) {
+  public static <T> Map<String, VariablePair> extractToJsonPayload(T data, ObjectMapper mapper) {
     final VariablePair variable = VariablePair.builder()
       .type(CamundaType.STRING)
-      .value(data)
+      .value(convertToJson(data, mapper))
       .valueInfo(ValueInfo.builder()
         .serializationDataFormat(SerializationDataFormat.JSON)
         .objectTypeName(data.getClass().getName())
         .build())
       .build();
-    final String key = StringUtils.capitalize(data.getClass().getSimpleName());
+    final String key = StringUtils.uncapitalize(data.getClass().getSimpleName());
     return Map.of(key, variable);
   }
 
@@ -55,6 +57,15 @@ public class PayloadUtil {
       variables.put(key, pair);
     });
     return variables;
+  }
+
+  private static <T> String convertToJson(T data, ObjectMapper mapper) {
+    try {
+      return mapper.writeValueAsString(data);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      throw new IllegalArgumentException("Can't parse object to string");
+    }
   }
 
   public static CamundaType getType(final String className) {
