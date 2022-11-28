@@ -55,6 +55,7 @@ public class CamundaRestAutoConfiguration {
       .errorHandler(camundaRestGlobalHandler())
       .interceptors(camundaRestRequestResponseInterceptor())
       .defaultHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+      .basicAuthentication(properties.getBasicAuth().getUsername(), properties.getBasicAuth().getPassword())
       .build();
   }
 
