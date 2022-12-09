@@ -75,9 +75,7 @@ public class PayloadUtil {
       return CamundaType.INTEGER;
     } else if (className.equals(Long.class.getName())) {
       return CamundaType.LONG;
-    } else if (className.equals(Float.class.getName())) {
-      return CamundaType.FLOAT;
-    } else if (className.equals(Double.class.getName())) {
+    } else if (className.equals(Float.class.getName()) || className.equals(Double.class.getName())) {
       return CamundaType.DOUBLE;
     } else if (className.equals(Array.class.getName())) {
       return CamundaType.ARRAY;
