@@ -3,10 +3,12 @@ package uz.keysoft.camunda.spring.boot.starter.serializers;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.springframework.boot.jackson.JsonComponent;
 import uz.keysoft.camunda.spring.boot.starter.enums.SerializationDataFormat;
 
 import java.io.IOException;
 
+@JsonComponent
 public class DataFormatSerializer extends StdSerializer<SerializationDataFormat> {
 
   public DataFormatSerializer() {

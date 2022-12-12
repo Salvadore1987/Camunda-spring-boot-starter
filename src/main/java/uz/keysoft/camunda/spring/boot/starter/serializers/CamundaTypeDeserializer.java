@@ -3,10 +3,12 @@ package uz.keysoft.camunda.spring.boot.starter.serializers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import org.springframework.boot.jackson.JsonComponent;
 import uz.keysoft.camunda.spring.boot.starter.enums.CamundaType;
 
 import java.io.IOException;
 
+@JsonComponent
 public class CamundaTypeDeserializer extends StdDeserializer<CamundaType> {
 
   public CamundaTypeDeserializer() {

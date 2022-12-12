@@ -3,11 +3,13 @@ package uz.keysoft.camunda.spring.boot.starter.serializers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@JsonComponent
 public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
   private final String PATTERN = "yyyy-MM-dd HH:mm:ss";
