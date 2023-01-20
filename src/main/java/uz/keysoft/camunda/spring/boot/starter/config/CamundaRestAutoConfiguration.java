@@ -23,9 +23,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import uz.keysoft.camunda.spring.boot.starter.handler.CamundaRestGlobalHandler;
 import uz.keysoft.camunda.spring.boot.starter.interceptor.CamundaRestRequestResponseInterceptor;
+import uz.keysoft.camunda.spring.boot.starter.service.CamundaIncidentService;
 import uz.keysoft.camunda.spring.boot.starter.service.CamundaMessageService;
 import uz.keysoft.camunda.spring.boot.starter.service.CamundaProcessService;
 import uz.keysoft.camunda.spring.boot.starter.service.CamundaTaskService;
+import uz.keysoft.camunda.spring.boot.starter.service.IncidentService;
 import uz.keysoft.camunda.spring.boot.starter.service.MessageService;
 import uz.keysoft.camunda.spring.boot.starter.service.ProcessService;
 import uz.keysoft.camunda.spring.boot.starter.service.TaskService;
@@ -82,6 +84,11 @@ public class CamundaRestAutoConfiguration {
   @Bean
   public ClientHttpRequestInterceptor camundaRestRequestResponseInterceptor() {
     return new CamundaRestRequestResponseInterceptor();
+  }
+
+  @Bean
+  public IncidentService incidentService() {
+    return new CamundaIncidentService(restTemplate());
   }
 
   private ClientHttpRequestFactory getRequestFactory() {
