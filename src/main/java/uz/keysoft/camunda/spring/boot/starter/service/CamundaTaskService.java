@@ -43,11 +43,11 @@ public class CamundaTaskService implements TaskService {
   @Override
   public List<CamundaTask> getTaskListById(String processInstanceId) {
     final ResponseEntity<List<CamundaTask>> response = restTemplate.exchange(
-      "/task",
+      "/task?processInstanceId={id}",
       HttpMethod.GET,
       null,
       new ParameterizedTypeReference<>() {},
-      Map.of("processInstanceId", processInstanceId));
+      Map.of("id", processInstanceId));
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 

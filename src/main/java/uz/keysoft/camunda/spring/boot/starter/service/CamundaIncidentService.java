@@ -26,24 +26,24 @@ public class CamundaIncidentService implements IncidentService {
   @Override
   public List<IncidentTask> getIncidentListByProcessId(String processInstanceId) {
     final ResponseEntity<List<IncidentTask>> response = restTemplate.exchange(
-      "/incident",
+      "/incident?processInstanceId={id}",
       HttpMethod.GET,
       null,
       new ParameterizedTypeReference<>() {},
-      Map.of("processInstanceId", processInstanceId));
+      Map.of("id", processInstanceId));
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
   @Override
-  public void retry(String taskId) {
-    final Retry retry = Retry.builder().id(taskId).retries(1).build();
+  public void retry(String configuration) {
+    final Retry retry = Retry.builder().id(configuration).retries(1).build();
     final HttpEntity<Retry> entity = new HttpEntity<>(retry);
     restTemplate.exchange(
-      "/{id}/retries",
-      HttpMethod.POST,
+      "/external-task/{id}/retries",
+      HttpMethod.PUT,
       entity,
       new ParameterizedTypeReference<>() {},
-      Map.of("id", taskId));
+      Map.of("id", configuration));
   }
 
 }
