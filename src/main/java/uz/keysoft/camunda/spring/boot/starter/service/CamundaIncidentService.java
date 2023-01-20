@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.IncidentTask;
+import uz.keysoft.camunda.spring.boot.starter.dto.incident.Pagination;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.Retry;
 
 import java.util.List;
@@ -31,6 +32,17 @@ public class CamundaIncidentService implements IncidentService {
       null,
       new ParameterizedTypeReference<>() {},
       Map.of("id", processInstanceId));
+    return Optional.ofNullable(response.getBody()).orElseThrow();
+  }
+
+  @Override
+  public List<IncidentTask> getIncidentList(Pagination pagination) {
+    final ResponseEntity<List<IncidentTask>> response = restTemplate.exchange(
+      "/incident?firstResult={page}&maxResults={count}",
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() {},
+      Map.of("page", pagination.getPage(), "count", pagination.getCount()));
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
