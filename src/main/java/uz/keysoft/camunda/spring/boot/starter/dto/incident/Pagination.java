@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Pagination {
 
-  int page;
-  int count;
+  int firstResult;
+  int maxResults;
 
 }

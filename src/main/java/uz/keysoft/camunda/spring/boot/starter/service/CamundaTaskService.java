@@ -11,6 +11,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.VariablePair;
+import uz.keysoft.camunda.spring.boot.starter.dto.incident.IncidentTask;
+import uz.keysoft.camunda.spring.boot.starter.dto.incident.Pagination;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.CamundaTask;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.CompleteTaskRequest;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.User;
@@ -41,13 +43,24 @@ public class CamundaTaskService implements TaskService {
    * @see <a href='https://docs.camunda.org/manual/7.5/reference/rest/task/get-query/'>Get Tasks</a>
    */
   @Override
-  public List<CamundaTask> getTaskListById(String processInstanceId) {
+  public List<CamundaTask> getTaskListByProcessId(String processInstanceId) {
     final ResponseEntity<List<CamundaTask>> response = restTemplate.exchange(
       "/task?processInstanceId={id}",
       HttpMethod.GET,
       null,
       new ParameterizedTypeReference<>() {},
       Map.of("id", processInstanceId));
+    return Optional.ofNullable(response.getBody()).orElseThrow();
+  }
+
+  @Override
+  public List<CamundaTask> getAllTaskList(Pagination pagination) {
+    final ResponseEntity<List<CamundaTask>> response = restTemplate.exchange(
+      "/task?firstResult={page}&maxResults={count}",
+      HttpMethod.GET,
+      null,
+      new ParameterizedTypeReference<>() {},
+      Map.of("page", pagination.getFirstResult(), "count", pagination.getMaxResults()));
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 

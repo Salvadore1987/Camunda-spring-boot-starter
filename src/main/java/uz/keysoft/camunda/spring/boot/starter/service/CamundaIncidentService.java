@@ -42,7 +42,7 @@ public class CamundaIncidentService implements IncidentService {
       HttpMethod.GET,
       null,
       new ParameterizedTypeReference<>() {},
-      Map.of("page", pagination.getPage(), "count", pagination.getCount()));
+      Map.of("page", pagination.getFirstResult(), "count", pagination.getMaxResults()));
     return Optional.ofNullable(response.getBody()).orElseThrow();
   }
 
