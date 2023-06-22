@@ -1,6 +1,9 @@
 package uz.keysoft.camunda.spring.boot.starter.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.config.RequestConfig;
@@ -18,6 +21,7 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -38,6 +42,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.ACCEPT_CHARSET;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 
 @Data
 @Configuration
@@ -47,48 +53,61 @@ import static org.apache.http.HttpHeaders.ACCEPT;
 public class CamundaRestAutoConfiguration {
 
   private final CamundaRestProperties properties;
-  private final ObjectMapper mapper;
+
+  public ObjectMapper objectMapper() {
+    final ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+    objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false);
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    objectMapper.registerModule(new JavaTimeModule());
+    return objectMapper;
+  }
+
+  public MappingJackson2HttpMessageConverter customJackson2HttpMessageConverter() {
+    final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+    jsonConverter.setObjectMapper(objectMapper());
+    return jsonConverter;
+  }
 
   public RestTemplate restTemplate() {
     final DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(properties.getBaseUrl());
     return new RestTemplateBuilder()
+      .messageConverters(customJackson2HttpMessageConverter())
       .uriTemplateHandler(uriBuilderFactory)
       .requestFactory(() -> new BufferingClientHttpRequestFactory(getRequestFactory()))
       .errorHandler(camundaRestGlobalHandler())
       .interceptors(camundaRestRequestResponseInterceptor())
-      .defaultHeader(ACCEPT, MediaType.APPLICATION_JSON_VALUE)
       .basicAuthentication(properties.getBasicAuth().getUsername(), properties.getBasicAuth().getPassword())
       .build();
   }
 
   @Bean
   public ProcessService camundaProcessService() {
-    return new CamundaProcessService(restTemplate(), mapper);
+    return new CamundaProcessService(restTemplate(), objectMapper());
   }
 
   @Bean
   public TaskService camundaTaskService() {
-    return new CamundaTaskService(restTemplate(), mapper);
+    return new CamundaTaskService(restTemplate(), objectMapper());
   }
 
   @Bean
   public MessageService camundaMessageService() {
-    return new CamundaMessageService(restTemplate(), mapper);
-  }
-
-  @Bean
-  public ResponseErrorHandler camundaRestGlobalHandler() {
-    return new CamundaRestGlobalHandler(mapper);
-  }
-
-  @Bean
-  public ClientHttpRequestInterceptor camundaRestRequestResponseInterceptor() {
-    return new CamundaRestRequestResponseInterceptor();
+    return new CamundaMessageService(restTemplate(), objectMapper());
   }
 
   @Bean
   public IncidentService incidentService() {
     return new CamundaIncidentService(restTemplate());
+  }
+
+  public ResponseErrorHandler camundaRestGlobalHandler() {
+    return new CamundaRestGlobalHandler(objectMapper());
+  }
+
+  public ClientHttpRequestInterceptor camundaRestRequestResponseInterceptor() {
+    return new CamundaRestRequestResponseInterceptor();
   }
 
   private ClientHttpRequestFactory getRequestFactory() {

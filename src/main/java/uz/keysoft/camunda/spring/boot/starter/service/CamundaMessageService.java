@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.message.CorrelateMessageRequest;
+import uz.keysoft.camunda.spring.boot.starter.utils.HttpUtils;
 import uz.keysoft.camunda.spring.boot.starter.utils.PayloadUtil;
 
 import java.util.Map;
@@ -44,7 +45,7 @@ public class CamundaMessageService implements MessageService {
       .businessKey(businessKey)
       .processVariables(PayloadUtil.extractPayload(mapper.convertValue(data, Map.class)))
       .build();
-    final HttpEntity<CorrelateMessageRequest> entity = new HttpEntity<>(request);
+    final HttpEntity<CorrelateMessageRequest> entity = new HttpEntity<>(request, HttpUtils.getHeaders());
     restTemplate.exchange(
       "/message",
       HttpMethod.POST,
@@ -67,7 +68,7 @@ public class CamundaMessageService implements MessageService {
       .correlationKeys(PayloadUtil.extractCorrelationKeys(keys))
       .processVariables(PayloadUtil.extractPayload(mapper.convertValue(data, Map.class)))
       .build();
-    final HttpEntity<CorrelateMessageRequest> entity = new HttpEntity<>(request);
+    final HttpEntity<CorrelateMessageRequest> entity = new HttpEntity<>(request, HttpUtils.getHeaders());
     restTemplate.exchange(
       "/message",
       HttpMethod.POST,

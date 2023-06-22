@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.process.StartProcessRequest;
 import uz.keysoft.camunda.spring.boot.starter.dto.process.StartProcessResult;
+import uz.keysoft.camunda.spring.boot.starter.utils.HttpUtils;
 import uz.keysoft.camunda.spring.boot.starter.utils.PayloadUtil;
 
 import java.util.Map;
@@ -161,11 +162,11 @@ public class CamundaProcessService implements ProcessService {
   }
 
   private <T> HttpEntity<StartProcessRequest> httpEntity(String businessKey, T data) {
-    return new HttpEntity<>(buildRequest(businessKey, data));
+    return new HttpEntity<>(buildRequest(businessKey, data), HttpUtils.getHeaders());
   }
 
   private HttpEntity<StartProcessRequest> httpEntity(String businessKey, Map<String, Object> variables) {
-    return new HttpEntity<>(buildRequest(businessKey, variables));
+    return new HttpEntity<>(buildRequest(businessKey, variables), HttpUtils.getHeaders());
   }
 
 }

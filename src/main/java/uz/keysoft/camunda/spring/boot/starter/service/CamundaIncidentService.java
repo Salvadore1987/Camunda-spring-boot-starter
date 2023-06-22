@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.IncidentTask;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.Pagination;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.Retry;
+import uz.keysoft.camunda.spring.boot.starter.utils.HttpUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class CamundaIncidentService implements IncidentService {
   @Override
   public void retry(String configuration) {
     final Retry retry = Retry.builder().id(configuration).retries(1).build();
-    final HttpEntity<Retry> entity = new HttpEntity<>(retry);
+    final HttpEntity<Retry> entity = new HttpEntity<>(retry, HttpUtils.getHeaders());
     restTemplate.exchange(
       "/external-task/{id}/retries",
       HttpMethod.PUT,

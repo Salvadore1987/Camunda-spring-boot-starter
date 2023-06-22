@@ -7,15 +7,17 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import uz.keysoft.camunda.spring.boot.starter.dto.VariablePair;
-import uz.keysoft.camunda.spring.boot.starter.dto.incident.IncidentTask;
 import uz.keysoft.camunda.spring.boot.starter.dto.incident.Pagination;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.CamundaTask;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.CompleteTaskRequest;
 import uz.keysoft.camunda.spring.boot.starter.dto.task.User;
+import uz.keysoft.camunda.spring.boot.starter.utils.HttpUtils;
 import uz.keysoft.camunda.spring.boot.starter.utils.PayloadUtil;
 
 import java.util.List;
@@ -90,7 +92,9 @@ public class CamundaTaskService implements TaskService {
   @Override
   public void claim(String taskId, String userId) {
     final User user = User.builder().userId(userId).build();
-    final HttpEntity<User> entity = new HttpEntity<>(user);
+    final HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    final HttpEntity<User> entity = new HttpEntity<>(user, headers);
     restTemplate.exchange(
       "/task/{id}/claim",
       HttpMethod.POST,
@@ -108,7 +112,7 @@ public class CamundaTaskService implements TaskService {
   @Override
   public void unClaim(String taskId, String userId) {
     final User user = User.builder().userId(userId).build();
-    final HttpEntity<User> entity = new HttpEntity<>(user);
+    final HttpEntity<User> entity = new HttpEntity<>(user, HttpUtils.getHeaders());
     restTemplate.exchange(
       "/task/{id}/unclaim",
       HttpMethod.POST,
@@ -128,7 +132,7 @@ public class CamundaTaskService implements TaskService {
     final CompleteTaskRequest request = CompleteTaskRequest.builder()
       .variables(PayloadUtil.extractPayload(mapper.convertValue(data, Map.class)))
       .build();
-    final HttpEntity<CompleteTaskRequest> entity = new HttpEntity<>(request);
+    final HttpEntity<CompleteTaskRequest> entity = new HttpEntity<>(request, HttpUtils.getHeaders());
     restTemplate.exchange(
       "/task/{id}/complete",
       HttpMethod.POST,
